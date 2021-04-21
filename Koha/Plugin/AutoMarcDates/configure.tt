@@ -1,0 +1,73 @@
+[% USE KohaDates %]
+[% INCLUDE 'doc-head-open.inc' %]
+    <title>AutoMarcDates Configuration &rsaquo; Koha</title>
+[% INCLUDE 'doc-head-close.inc' %]
+</head>
+<body>
+[% INCLUDE 'header.inc' %]
+[% INCLUDE 'cat-search.inc' %]
+
+<div id="breadcrumbs"><a href="/cgi-bin/koha/mainpage.pl">Home</a> &rsaquo; <a href="/cgi-bin/koha/plugins/plugins-home.pl">Plugins</a> &rsaquo; AutoMarcDates &rsaquo; Configuration</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-8 col-sm-push-2">
+            <h3>AutoMarcDates Configuration</h3>
+
+            <form method="post">
+                <input type="hidden" name="class" value="[% CLASS | html %]"/>
+                <input type="hidden" name="method" value="[% METHOD | html %]"/>
+
+                <div class="form-group">
+                    <label>Enable plugin for:</label>
+                    <div class="checkbox">
+                        <label>
+                            [% IF enable_biblio %]
+                                <input type="checkbox" id="enable_biblio" name="enable_biblio" value="1" checked>
+                            [% ELSE %]
+                                <input type="checkbox" id="enable_biblio" name="enable_biblio" value="1">
+                            [% END %]
+                            Bibliographic records
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            [% IF enable_authority %]
+                                <input type="checkbox" id="enable_authority" name="enable_authority" value="1" checked>
+                            [% ELSE %]
+                                <input type="checkbox" id="enable_authority" name="enable_authority" value="1">
+                            [% END %]
+                            Authority records
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="biblio_created_field">Biblio MARC field for creation date</label>
+                    <input type="text" class="form-control" id="biblio_created_field" name="biblio_created_field" value="[% biblio_created_field | html %]">
+                    <p class="help-block">Example: 099$c</p>
+                </div>
+                <div class="form-group">
+                    <label for="biblio_updated_field">Biblio MARC field for modification date</label>
+                    <input type="text" class="form-control" id="biblio_updated_field" name="biblio_updated_field" value="[% biblio_updated_field | html %]">
+                    <p class="help-block">Example: 099$d</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="authority_created_field">Authority MARC field for creation date</label>
+                    <input type="text" class="form-control" id="authority_created_field" name="authority_created_field" value="[% authority_created_field | html %]">
+                    <p class="help-block">Example: 099$e</p>
+                </div>
+                <div class="form-group">
+                    <label for="authority_updated_field">Authority MARC field for modification date</label>
+                    <input type="text" class="form-control" id="authority_updated_field" name="authority_updated_field" value="[% authority_updated_field | html %]">
+                    <p class="help-block">Example: 099$f</p>
+                </div>
+
+                <button type="submit">Save configuration</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+[% INCLUDE 'intranet-bottom.inc' %]
