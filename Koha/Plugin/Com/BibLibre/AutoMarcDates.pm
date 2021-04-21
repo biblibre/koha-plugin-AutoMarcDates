@@ -1,4 +1,4 @@
-package Koha::Plugin::AutoMarcDates;
+package Koha::Plugin::Com::BibLibre::AutoMarcDates;
 
 use Modern::Perl;
 
