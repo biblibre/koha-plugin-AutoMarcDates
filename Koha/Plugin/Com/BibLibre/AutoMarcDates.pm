@@ -15,7 +15,7 @@ sub new {
         name => 'AutoMarcDates',
         version => '0.1.0',
         author => 'BibLibre',
-        minimum_version => undef,
+        minimum_version => '18.11',
         maximum_version => undef,
         description => 'Automatically set created/modified date in MARC (biblio and authority) upon creation/modification',
     };
@@ -68,7 +68,15 @@ sub object_store_pre {
 sub _update_biblio_metadata {
     my ($self, $biblio_metadata) = @_;
 
-    my $record = $biblio_metadata->record;
+    my $flavour = C4::Context->preference('marcflavour');
+
+    my $record;
+    if ($biblio_metadata->can('record')) {
+        $record = $biblio_metadata->record;
+    } else {
+        # For Koha < 19.05
+        $record = MARC::Record->new_from_xml($biblio_metadata->metadata, 'utf8', $flavour);
+    }
 
     my $created_field = $self->retrieve_data('biblio_created_field');
     if ($created_field) {
