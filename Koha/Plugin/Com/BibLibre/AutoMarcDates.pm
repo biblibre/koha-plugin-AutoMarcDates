@@ -2,29 +2,59 @@ package Koha::Plugin::Com::BibLibre::AutoMarcDates;
 
 use Modern::Perl;
 
-use POSIX qw(strftime);
+use parent 'Koha::Plugins::Base';
 
+use POSIX qw(strftime);
 use C4::Context;
 
-use parent 'Koha::Plugins::Base';
+our $VERSION = '1.1';
+
+our $metadata = {
+    name        => 'AutoMarcDates',
+    author      => 'BibLibre',
+    description => 'Automatically set created/modified date in MARC (biblio and authority) upon creation/modification',
+    date_authored   => '2021-04-21',
+    date_updated    => '2021-08-13',
+    minimum_version => '18.11',
+    maximum_version => undef,
+    version         => $VERSION,
+};
 
 sub new {
     my ($class, $args) = @_;
 
-    $args->{metadata} = {
-        name => 'AutoMarcDates',
-        version => '0.1.0',
-        author => 'BibLibre',
-        minimum_version => '18.11',
-        maximum_version => undef,
-        description => 'Automatically set created/modified date in MARC (biblio and authority) upon creation/modification',
-    };
+    $args->{'metadata'} = $metadata;
+    $args->{'metadata'}->{'class'} = $class;
 
-    return $class->SUPER::new($args);
+    my $self = $class->SUPER::new($args);
+
+    return $self;
+}
+
+# Mandatory even if does nothing
+sub install {
+    my ( $self, $args ) = @_;
+ 
+    return 1;
+}
+ 
+# Mandatory even if does nothing
+sub upgrade {
+    my ( $self, $args ) = @_;
+ 
+    return 1;
+}
+ 
+# Mandatory even if does nothing
+sub uninstall {
+    my ( $self, $args ) = @_;
+ 
+    return 1;
 }
 
 sub configure {
     my ( $self, $args ) = @_;
+
     my $cgi = $self->{'cgi'};
 
     if ($cgi->request_method() eq 'POST') {
