@@ -5,6 +5,8 @@ use Modern::Perl;
 use parent 'Koha::Plugins::Base';
 
 use POSIX qw(strftime);
+use MARC::Field;
+use MARC::Record;
 use C4::Context;
 
 our $VERSION = '1.1';
