@@ -46,6 +46,16 @@
                     <label for="biblio_created_field">Biblio MARC field for creation date</label>
                     <input type="text" class="form-control" id="biblio_created_field" name="biblio_created_field" value="[% biblio_created_field | html %]">
                     <p class="help-block">Example: 099$c</p>
+                    <div class="checkbox">
+                        <label>
+                            [% IF biblio_created_override %]
+                                <input type="checkbox" id="biblio_created_override" name="biblio_created_override" value="1" checked>
+                            [% ELSE %]
+                                <input type="checkbox" id="biblio_created_override" name="biblio_created_override" value="1">
+                            [% END %]
+                            Override if already exists
+                        </label>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="biblio_updated_field">Biblio MARC field for modification date</label>
@@ -57,6 +67,16 @@
                     <label for="authority_created_field">Authority MARC field for creation date</label>
                     <input type="text" class="form-control" id="authority_created_field" name="authority_created_field" value="[% authority_created_field | html %]">
                     <p class="help-block">Example: 099$e</p>
+                    <div class="checkbox">
+                        <label>
+                            [% IF authority_created_override %]
+                                <input type="checkbox" id="authority_created_override" name="authority_created_override" value="1" checked>
+                            [% ELSE %]
+                                <input type="checkbox" id="authority_created_override" name="authority_created_override" value="1">
+                            [% END %]
+                            Override if already exists
+                        </label>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="authority_updated_field">Authority MARC field for modification date</label>
