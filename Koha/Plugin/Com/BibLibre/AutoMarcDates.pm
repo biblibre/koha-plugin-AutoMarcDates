@@ -9,14 +9,14 @@ use MARC::Field;
 use MARC::Record;
 use C4::Context;
 
-our $VERSION = '1.1';
+our $VERSION = '1.2';
 
 our $metadata = {
     name        => 'AutoMarcDates',
     author      => 'BibLibre',
     description => 'Automatically set created/modified date in MARC (biblio and authority) upon creation/modification',
     date_authored   => '2021-04-21',
-    date_updated    => '2021-08-13',
+    date_updated    => '2024-02-27',
     minimum_version => '18.11',
     maximum_version => undef,
     version         => $VERSION,
@@ -64,8 +64,10 @@ sub configure {
             enable_biblio => $cgi->param('enable_biblio') // 0,
             enable_authority => $cgi->param('enable_authority') // 0,
             biblio_created_field => $cgi->param('biblio_created_field') // '',
+            biblio_created_override => $cgi->param('biblio_created_override') // 0,
             biblio_updated_field => $cgi->param('biblio_updated_field') // '',
             authority_created_field => $cgi->param('authority_created_field') // '',
+            authority_created_override => $cgi->param('authority_created_override') // 0,
             authority_updated_field => $cgi->param('authority_updated_field') // '',
         });
         $self->go_home();
@@ -78,8 +80,10 @@ sub configure {
         enable_biblio => $self->retrieve_data('enable_biblio'),
         enable_authority => $self->retrieve_data('enable_authority'),
         biblio_created_field => $self->retrieve_data('biblio_created_field'),
+        biblio_created_override => $self->retrieve_data('biblio_created_override'),
         biblio_updated_field => $self->retrieve_data('biblio_updated_field'),
         authority_created_field => $self->retrieve_data('authority_created_field'),
+        authority_created_override => $self->retrieve_data('authority_created_override'),
         authority_updated_field => $self->retrieve_data('authority_updated_field'),
     );
 
@@ -111,18 +115,19 @@ sub _update_biblio_metadata {
     }
 
     my $created_field = $self->retrieve_data('biblio_created_field');
+    my $created_override = $self->retrieve_data('biblio_created_override');
     if ($created_field) {
         my $datecreated = $biblio_metadata->_result->biblionumber->datecreated;
-        $self->_update_marc_record($record, $created_field, $datecreated);
+        $self->_update_marc_record($record, $created_field, $datecreated, override => $created_override);
     }
 
     my $updated_field = $self->retrieve_data('biblio_updated_field');
     if ($updated_field) {
         my $dateupdated = strftime('%Y-%m-%d', localtime);
-        $self->_update_marc_record($record, $updated_field, $dateupdated, overwrite => 1);
+        $self->_update_marc_record($record, $updated_field, $dateupdated, override => 1);
     }
 
-    $biblio_metadata->metadata($record->as_xml_record(C4::Context->preference('marcflavour')));
+    $biblio_metadata->metadata($record->as_xml_record($flavour));
 }
 
 sub _update_auth_header {
@@ -134,15 +139,16 @@ sub _update_auth_header {
     my $record = MARC::Record->new_from_xml($auth_header->marcxml, 'UTF-8', $flavour);
 
     my $created_field = $self->retrieve_data('authority_created_field');
+    my $created_override = $self->retrieve_data('authority_created_override');
     if ($created_field) {
         my $datecreated = $auth_header->datecreated;
-        $self->_update_marc_record($record, $created_field, $datecreated);
+        $self->_update_marc_record($record, $created_field, $datecreated, override => $created_override);
     }
 
     my $updated_field = $self->retrieve_data('authority_updated_field');
     if ($updated_field) {
         my $dateupdated = strftime('%Y-%m-%d', localtime);
-        $self->_update_marc_record($record, $updated_field, $dateupdated, overwrite => 1);
+        $self->_update_marc_record($record, $updated_field, $dateupdated, override => 1);
     }
 
     $auth_header->marcxml($record->as_xml_record($flavour));
@@ -151,11 +157,16 @@ sub _update_auth_header {
 sub _update_marc_record {
     my ($self, $record, $fieldspec, $value, %opts) = @_;
 
+    my $override = $opts{override} // 0;
+
     if ($fieldspec && $fieldspec =~ /^(\d{3})\$([0-9a-zA-Z])$/) {
         my ($tag, $code) = ($1, $2);
         my $field = $record->field($tag);
         if ($field) {
-            $field->update($code => $value) if $opts{overwrite} || !$field->subfield($code);
+            my $currvalue = $field->subfield($code);
+            if ( !$currvalue || $override ) {
+                $field->update( $code => $value );
+            }
         } else {
             $field = MARC::Field->new($tag, ' ', ' ', $code => $value);
             $record->insert_grouped_field($field);
