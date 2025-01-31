@@ -16,9 +16,9 @@ our $metadata = {
     author      => 'BibLibre',
     description => 'Automatically set created/modified date in MARC (biblio and authority) upon creation/modification',
     date_authored   => '2021-04-21',
-    date_updated    => '2024-02-27',
+    date_updated    => '2025-01-31',
     minimum_version => '18.11',
-    maximum_version => undef,
+    maximum_version => '23.12',
     version         => $VERSION,
 };
 
