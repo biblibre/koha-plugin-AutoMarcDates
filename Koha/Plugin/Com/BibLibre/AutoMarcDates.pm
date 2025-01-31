@@ -9,7 +9,7 @@ use MARC::Field;
 use MARC::Record;
 use C4::Context;
 
-our $VERSION = '1.3';
+our $VERSION = '2.0';
 
 our $metadata = {
     name        => 'AutoMarcDates',
@@ -17,8 +17,8 @@ our $metadata = {
     description => 'Automatically set created/modified date in MARC (biblio and authority) upon creation/modification',
     date_authored   => '2021-04-21',
     date_updated    => '2025-01-31',
-    minimum_version => '18.11',
-    maximum_version => '23.12',
+    minimum_version => '24.05',
+    maximum_version => undef,
     version         => $VERSION,
 };
 
@@ -58,8 +58,9 @@ sub configure {
     my ( $self, $args ) = @_;
 
     my $cgi = $self->{'cgi'};
+    my $op  = $cgi->param('op') // q{};
 
-    if ($cgi->request_method() eq 'POST') {
+    if ( $op eq 'cud-save' ) {
         $self->store_data({
             enable_biblio => $cgi->param('enable_biblio') // 0,
             enable_authority => $cgi->param('enable_authority') // 0,
