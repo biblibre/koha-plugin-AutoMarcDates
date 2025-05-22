@@ -9,7 +9,7 @@ use MARC::Field;
 use MARC::Record;
 use C4::Context;
 
-our $VERSION = '1.2';
+our $VERSION = '1.3';
 
 our $metadata = {
     name        => 'AutoMarcDates',
