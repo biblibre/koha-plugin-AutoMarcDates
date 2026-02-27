@@ -9,14 +9,14 @@ use MARC::Field;
 use MARC::Record;
 use C4::Context;
 
-our $VERSION = '2.0';
+our $VERSION = '2.1';
 
 our $metadata = {
     name        => 'AutoMarcDates',
     author      => 'BibLibre',
     description => 'Automatically set created/modified date in MARC (biblio and authority) upon creation/modification',
     date_authored   => '2021-04-21',
-    date_updated    => '2025-01-31',
+    date_updated    => '2026-02-27',
     minimum_version => '24.05',
     maximum_version => undef,
     version         => $VERSION,
